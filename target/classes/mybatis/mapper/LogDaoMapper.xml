@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecust.dao.LogDao">
+
+    <select id="queryAllLog" resultType="java.util.Map">
+        SELECT
+        ee.id,
+        ee.type,
+        ee.logshow
+        FROM
+        log_type ee
+    </select>
+
+    <select id="queryLogByType" resultType="com.ecust.pojo.Log">
+        SELECT
+        *
+        FROM
+        log_type ee
+        WHERE
+        ee.id = #{id}
+
+    </select>
+
+    <select id="queryLatestLog" resultType="com.ecust.pojo.Log">
+        SELECT
+        *
+        FROM
+        log_type ee
+        WHERE
+        ee.id = (SELECT MAX(id) FROM log_type)
+    </select>
+
+    <update id="updateLogByType">
+        UPDATE
+        log_type
+        SET
+        logshow = #{show}
+        WHERE
+        id = #{id}
+    </update>
+
+    <insert id="addLog">
+        INSERT INTO log_type(
+        type,
+        logshow,
+        status
+        )VALUES(
+        1,
+        #{show},
+        1
+        );
+    </insert>
+
+
+</mapper>

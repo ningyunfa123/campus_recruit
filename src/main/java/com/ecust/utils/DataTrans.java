@@ -1,14 +1,21 @@
 package com.ecust.utils;
 
 import com.ecust.dto.CompanyForm;
+import com.ecust.dto.ConfigForm;
 import com.ecust.pojo.Company;
+import com.ecust.pojo.Config;
 import com.ecust.pojo.RUser;
 import com.ecust.pojo.User;
+import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by cheng on 2017/8/18.
  */
 public class DataTrans {
+    private static Logger logger = Logger.getLogger(DataTrans.class);
     public static Company toCompany(CompanyForm companyForm) {
         Company company = new Company();
         company.setName(companyForm.getName());
@@ -22,7 +29,7 @@ public class DataTrans {
             company.setPush(1);
             company.setPush_code(companyForm.getPush_code());
         }
-        company.setStatus(0); // 0 :Î´Í¶µÝ 1: ÒÑÍ¶µÝ
+        company.setStatus(0); // 0 :Î´Í¶ï¿½ï¿½ 1: ï¿½ï¿½Í¶ï¿½ï¿½
         return company;
     }
 
@@ -30,10 +37,47 @@ public class DataTrans {
         User user = new User();
         user.setUserName(rUser.getUserName());
         user.setPassword(rUser.getPassword());
-        user.setRoleName("ÓÃ»§");
+        user.setRoleName("ï¿½Ã»ï¿½");
         return user;
     }
-
+    public static Config transToConfig(ConfigForm configForm){
+        Config config = new Config();
+        String params = configForm.getExtraParams();
+        String[] extraPramas ;
+        if(params !=null && params !="") {
+            extraPramas = params.split(",");
+            if(extraPramas.length==1){
+                config.setExtraParam1(extraPramas[0]);
+            }else if(extraPramas.length==2){
+                config.setExtraParam1(extraPramas[0]);
+                config.setExtraParam2(extraPramas[1]);
+            }else if(extraPramas.length>2){
+                config.setExtraParam1(extraPramas[0]);
+                config.setExtraParam2(extraPramas[1]);
+                config.setExtraParam3(extraPramas[2]);
+            }
+            logger.error(extraPramas.length);
+        }
+        config.setURI(configForm.getUriConfig());
+        config.setKeyWordForReq(configForm.getKeyWordForReq());
+        config.setKeyWordForResp(configForm.getKeyWordForResp());
+        config.setTagWordForReq(configForm.getTagWordForReq());
+        config.setTagWordForResp(configForm.getTagWordForResp());
+        config.setFileName(configForm.getFileName());
+        return config;
+    }
+    public static List<String> transToList(Config config){
+        List<String> list = new ArrayList<>();
+        list.add(config.getURI());
+        list.add(config.getKeyWordForReq());
+        list.add(config.getKeyWordForResp());
+        list.add(config.getTagWordForReq());
+        list.add(config.getTagWordForResp());
+        list.add(config.getExtraParam1());
+        list.add(config.getExtraParam2());
+        list.add(config.getExtraParam3());
+        return list;
+    }
     public static void main(String[] args) {
         System.out.println("\" nihao \"");
     }

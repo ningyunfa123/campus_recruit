@@ -18,7 +18,7 @@ public class PageUtils {
 		PageHelper.startPage(page.getPageNo(), page.getPageSize());
 	}
 	//分页结果封装
-	public static Map<String, Object> proccess(List<Map<String, Object>> queryData) {
+	public static Map<String, Object> proccess(List queryData) {
 		Map<String,Object> map = new HashMap<String,Object>();
 		PageInfo pageInfo = new PageInfo(queryData);
 		
