@@ -28,6 +28,8 @@ public interface UserDao {
 
 	public void deleteUser(@Param("id")String id);
 
+	Map<String,Object> queryUserByName(@Param("userName") String userName);
+
 	public int countUserNum();
 
 	User signUp(User user);

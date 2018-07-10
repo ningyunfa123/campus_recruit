@@ -53,10 +53,8 @@
     </li>
 </ul>
 <script type="text/javascript">
-
     //用户权限管理
     $(function () {
-
         $("#userMenu").hide();
         $("#departmentMenu").hide();
         <%--var roleName = "${currentUser.roleName}";--%>
@@ -80,13 +78,11 @@
         <%--$("#userMenu").hide();--%>
         <%--}--%>
     });
-
     //查询所有部门
     $('#departmentMenu').click(function (event) {
         $(this).addClass("active").siblings().removeClass("active");
         pageDepartment();
     });
-
     //点击设备管理
     $('#equipmentMenu').click(function (event) {
         $(this).addClass("active").siblings().removeClass("active");
@@ -108,8 +104,6 @@
                 }
             });
     }
-
-
     //切换到equipment/list.jsp
     function pageEquipment() {
         $.ajax({
@@ -127,7 +121,6 @@
             }
         });
     }
-
     //点击首页
     $("#home").click(function (event) {
         $(this).addClass("active").siblings().removeClass("active");
@@ -145,7 +138,6 @@
                 }
             });
     });
-
     //点击联系人
     $("#userMenu").click(function (event) {
         $(this).addClass("active").siblings().removeClass("active");
@@ -166,7 +158,6 @@
                 }
             });
     }
-
     //切换到user/roleList.jsp
     function pageRole() {
         $.ajax(
@@ -183,7 +174,6 @@
                 }
             });
     }
-
     //点击设备维修
     $("#repairMenu").click(function (event) {
         $(this).addClass("active").siblings().removeClass("active");
@@ -204,7 +194,6 @@
                 }
             });
     }
-
     //点击维修历史
     function pageRepairHistory() {
         $.ajax(
@@ -221,12 +210,11 @@
                 }
             });
     }
-
     //切换到equipment/type.jsp
     function pageType() {
         $.ajax(
             {
-                url: "${pageContext.request.contextPath}/equipment/pageType",
+                url: "${pageContext.request.contextPath}/department/pageDepartment",
                 type: "GET",
                 datatype: "html",
                 success: function (data) {
@@ -238,7 +226,6 @@
                 }
             });
     }
-
     //切换到equipment/stateChart.jsp
     function pageStateChart() {
         $.ajax(
@@ -255,7 +242,6 @@
                 }
             });
     }
-
     //切换到repair/repairChart.jsp
     function pageRepairChart() {
         $.ajax(
@@ -272,7 +258,6 @@
                 }
             });
     }
-
     //切换到 复制粘贴文本框
     function copyClipBoard() {
         $.ajax(
@@ -289,8 +274,4 @@
                 }
             });
     }
-
-
 </script>
-
-

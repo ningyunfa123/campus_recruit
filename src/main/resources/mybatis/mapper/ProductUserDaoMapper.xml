@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecust.dao.ProductUserDao">
+    <!-- 根据productid查表 -->
+    <select id="queryUserByProduct" resultType="java.util.Map">
+        SELECT
+            *
+        FROM
+            product_user ee
+        WHERE
+            ee.productid = #{productid}
+
+    </select>
+    <!-- 根据userid查表 -->
+    <select id="queryProductByUser" resultType="java.util.Map">
+        SELECT
+            *
+        FROM
+            product_user ee
+        WHERE
+            ee.userid = #{userid}
+    </select>
+    <!-- 根据userid和productid查表 -->
+    <select id="queryByProductAndUser" resultType="java.util.Map">
+        SELECT
+            *
+        FROM
+            product_user ee
+        WHERE
+           ee.userid = #{userid}
+        AND
+            ee.productid = #{productid}
+    </select>
+    <!-- 新增数据 -->
+    <insert id="addData" parameterType="com.ecust.pojo.ProductUser">
+        INSERT INTO
+            product_user(
+                userid,
+                productid,
+                username,
+                status,
+                productname
+            )
+        VALUES(
+            #{userid},
+            #{productid},
+            #{username},
+            1,
+            #{productname}
+        )
+    </insert>
+    <!-- 修改数据 -->
+    <update id="modifyDATA" parameterType="com.ecust.pojo.ProductUser">
+        UPDATE
+            product_user
+        SET
+            <if test="username !=null">
+                username = #{username},
+            </if>
+            <if test="productname !=null">
+                productname = #{productname},
+            </if>
+            status =1
+        WHERE
+            id = #{id}
+    </update>
+    <!-- 修改状态 -->
+    <update id="modifyStatus">
+        UPDATE
+            product_user
+        SET
+            status = #{status}
+        WHERE
+            id = #{id}
+    </update>
+
+</mapper>

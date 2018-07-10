@@ -1,4 +1,12 @@
 package com.ecust.service;
 
-public class ProductLineService {
+import com.ecust.pojo.ProductLine;
+
+import java.util.List;
+import java.util.Map;
+
+public interface ProductLineService {
+
+    Map<String,Object> queryAllProduct();
+    Map<String,String> addProduct(ProductLine productLine);
 }

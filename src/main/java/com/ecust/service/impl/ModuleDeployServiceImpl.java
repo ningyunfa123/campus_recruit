@@ -1,14 +1,13 @@
 package com.ecust.service.impl;
 
 import com.ecust.dao.ProductLineDao;
-import com.ecust.pojo.BuildInfo;
-import com.ecust.pojo.ModuleInfo;
-import com.ecust.pojo.PipelineInfo;
+import com.ecust.pojo.*;
 import com.ecust.service.ModuleDeployService;
 import com.ecust.utils.ModuleDeploy.HttpGet;
 import com.ecust.utils.ModuleDeploy.HttpPost;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +16,7 @@ import java.util.*;
 @Service
 public class ModuleDeployServiceImpl implements ModuleDeployService {
 
+    private final Logger logger = Logger.getLogger(ModuleDeployServiceImpl.class);
     @Autowired
     ProductLineDao productLineDao;
     @Override
@@ -37,7 +37,7 @@ public class ModuleDeployServiceImpl implements ModuleDeployService {
         String pipeLineUrl = "http://agile.baidu.com/agile/pipelineConf/getPipelineBranchInfo";
         String pipeLineParam = "module="+productPath;
         String pipelineResp = HttpGet.httpGet(pipeLineUrl,pipeLineParam,agileCookie);
-        if(pipelineResp == "请求失败"){
+        if(pipelineResp.equals("请求失败")){
             //Map<String,Object> returnResult = new HashMap<>();
             returnResult.put("errno","-2");
             returnResult.put("msg","该pipeLine信息不存在");
@@ -45,17 +45,17 @@ public class ModuleDeployServiceImpl implements ModuleDeployService {
         }
         //数据转换
         JSONArray jArray = JSONArray.fromObject(pipelineResp);
-        Collection collection = JSONArray.toCollection(jArray,PipelineInfo.class);
-        List<PipelineInfo> pipelineInfos = new ArrayList<>();
+        Collection collection = JSONArray.toCollection(jArray,BranchInfo.class);
+        List<BranchInfo> branchInfos = new ArrayList<>();
         Iterator it = collection.iterator();
         while (it.hasNext()) {
-            PipelineInfo pipelineInfo = (PipelineInfo) it.next();
-            pipelineInfos.add(pipelineInfo);
+            BranchInfo branchInfo = (BranchInfo) it.next();
+            branchInfos.add(branchInfo);
         }
         Integer pipeLineId=null;
         //获取pipeLineConfigId
-        for (PipelineInfo tempPipelineInfo:pipelineInfos) {
-            if(tempPipelineInfo.getName()==pipelineName){
+        for (BranchInfo tempPipelineInfo:branchInfos) {
+            if(tempPipelineInfo.getName().equals(pipelineName)){
                 pipeLineId = tempPipelineInfo.getId();
                 break;
             }
@@ -70,7 +70,7 @@ public class ModuleDeployServiceImpl implements ModuleDeployService {
         String moduleUrl = "http://agile.baidu.com/agile/pipeline/getPipelineBuilds";
         String moduleParam = "pipelineConfId="+pipeLineId+"&branch="+branch+"&offset=0&limit=1";
         String moduleResp = HttpGet.httpGet(moduleUrl,moduleParam,agileCookie);
-        if(moduleResp =="请求失败"){
+        if(moduleResp.equals("请求失败")){
             //Map<String,Object> returnResult = new HashMap<>();
             returnResult.put("errno","-2");
             returnResult.put("msg","模块信息不存在");
@@ -100,7 +100,7 @@ public class ModuleDeployServiceImpl implements ModuleDeployService {
         String buildUrl = "http://agile.baidu.com/agile/commitInfo";
         String buildParam = "triggerId="+triggerId+"&compileBuildId="+compileBuildId+"&isGitModule=true";
         String buildResp = HttpGet.httpGet(buildUrl,buildParam,agileCookie);
-        if(buildResp == "请求失败"){
+        if(buildResp.equals("请求失败")){
             //Map<String,Object> returnResult = new HashMap<>();
             returnResult.put("errno","-2");
             returnResult.put("msg","该构建信息不存在");
@@ -108,9 +108,9 @@ public class ModuleDeployServiceImpl implements ModuleDeployService {
         }
         //json转java bean
         JSONObject jsonBuildResp = JSONObject.fromObject(buildResp);
-        BuildInfo buildInfo = (BuildInfo) JSONObject.toBean(jsonBuildResp,BuildInfo.class);
+        //BuildInfo buildInfo = (BuildInfo) JSONObject.toBean(jsonBuildResp,BuildInfo.class);
         //获取编译信息
-        String buildResult = buildInfo.getBuildResult();
+        String buildResult = (String) jsonBuildResp.get("buildResult");
         if(buildResult == "" || buildResult == null ){
             //Map<String,Object> returnResult = new HashMap<>();
             returnResult.put("errno","-2");
@@ -132,7 +132,7 @@ public class ModuleDeployServiceImpl implements ModuleDeployService {
         String deployUrl = "http://nminst.baidu.com/nminst/createenv";
         String deployCookie = properties.getProperty("nminst.baidu.com");
         String deployResult = HttpPost.httpPost(deployUrl,deployParam,deployCookie);
-        if(deployResult == "请求失败"){
+        if(deployResult.equals("请求失败")){
             //Map<String,Object> returnResult = new HashMap<>();
             returnResult.put("errno","-1");
             returnResult.put("msg","请求nminst代码部署失败");
@@ -149,6 +149,79 @@ public class ModuleDeployServiceImpl implements ModuleDeployService {
             //Map<String,Object> returnResult = new HashMap<>();
             returnResult.put("errno","-1");
             returnResult.put("msg","代码部署失败");
+            return returnResult;
+        }
+    }
+
+    @Override
+    public Map<String, Object> getBranchInfo(String productName,String pipeLineName) throws IOException {
+        Map<String,Object> productResult = productLineDao.queryProductByName(productName);
+        logger.error("productName:"+productName+",productResult:"+productResult+",pipeLineName:"+pipeLineName);
+        Map<String,Object> returnResult = new HashMap<>();
+        if(productResult.get("productpath") == null || productResult.get("productpath") =="" ){
+            returnResult.put("errno","-1");
+            returnResult.put("msg","获取DB模块信息失败");
+            return returnResult;
+        }
+        String productPath = (String) productResult.get("productpath");
+        //根据productPath获取分支信息
+        logger.error("productPath:"+productPath);
+        String branchUrl = "http://agile.baidu.com/agile/pipelineConf/getPipelineBranchInfo";
+        String branchParam = "module="+productPath;
+        Properties properties= new Properties();
+        properties.load(this.getClass().getResourceAsStream("/cookie.properties"));
+        String branchCookie = properties.getProperty("agile.baidu.com");
+        String branchResp = HttpGet.httpGet(branchUrl,branchParam,branchCookie);
+        if(branchResp.equals("请求失败") ){
+            returnResult.put("errno","-2");
+            returnResult.put("msg","该pipeLine信息不存在");
+            return returnResult;
+        }
+        logger.error("branchResp:"+branchResp);
+        JSONArray branchJsonArray = JSONArray.fromObject(branchResp);
+        Collection branchCollection = JSONArray.toCollection(branchJsonArray,BranchInfo.class);
+        Iterator branchIt = branchCollection.iterator();
+        List<BranchInfo> branchList = new ArrayList<>();
+        while(branchIt.hasNext()){
+            BranchInfo branchInfo = (BranchInfo) branchIt.next();
+            branchList.add(branchInfo);
+        }
+        logger.error("branchList:"+branchList);
+        JSONArray branchInfos = null;
+        for (BranchInfo tempBranchInfo:branchList){
+            logger.error("branchName:"+tempBranchInfo.getName()+","+pipeLineName);
+            if(tempBranchInfo.getName().equals(pipeLineName)){
+                logger.error("have pipeLine");
+                branchInfos = tempBranchInfo.getBranchInfos();
+                break;
+            }
+        }
+        if(branchInfos == null){
+            returnResult.put("errno","-2");
+            returnResult.put("msg","该pipeLine分支信息不存在");
+            return returnResult;
+        }else{
+            List<BranchInfos> branchInfosList = new ArrayList<>();
+            List<Map<String,Object>> branchNameList = new ArrayList<>();
+            Collection branchInfoCollection = JSONArray.toCollection(branchInfos,BranchInfos.class);
+            Iterator branchInfoIt = branchInfoCollection.iterator();
+            while(branchInfoIt.hasNext()){
+                BranchInfos branchInfos1 = (BranchInfos) branchInfoIt.next();
+                branchInfosList.add(branchInfos1);
+            }
+            //int length = branchInfos.size();
+            for (BranchInfos branchInfo : branchInfosList) {
+                logger.error("branchInfo:" + branchInfo);
+
+                if (!branchInfo.isDeleted()) {
+                    Map<String, Object> branchMap = new HashMap<>();
+                    branchMap.put("branchName", branchInfo.getName());
+                    branchNameList.add(branchMap);
+                }
+            }
+            returnResult.put("data",branchNameList);
+            returnResult.put("errno","0");
+            returnResult.put("msg","success");
             return returnResult;
         }
     }

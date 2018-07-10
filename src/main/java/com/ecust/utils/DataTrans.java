@@ -6,10 +6,15 @@ import com.ecust.pojo.Company;
 import com.ecust.pojo.Config;
 import com.ecust.pojo.RUser;
 import com.ecust.pojo.User;
+import com.google.common.collect.Maps;
 import org.apache.log4j.Logger;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by cheng on 2017/8/18.
@@ -77,6 +82,44 @@ public class DataTrans {
         list.add(config.getExtraParam2());
         list.add(config.getExtraParam3());
         return list;
+    }
+    public static Map<String, String> beanToMap(Object object, Boolean isExcludeNullValue) {
+        Map<String, String> map = new HashMap();
+        Class<?> clazz = object.getClass();
+
+        for(Class currentClazz = clazz; currentClazz != Object.class; currentClazz = currentClazz.getSuperclass()) {
+            Field[] fields = currentClazz.getDeclaredFields();
+
+            try {
+                Field[] var6 = fields;
+                int var7 = fields.length;
+
+                for(int var8 = 0; var8 < var7; ++var8) {
+                    Field field = var6[var8];
+                    field.setAccessible(true);
+
+                    Method method;
+                    try {
+                        method = currentClazz.getMethod("get" + CommonUtils.toUpperFirstChar(field.getName()));
+                    } catch (NoSuchMethodException var12) {
+                        continue;
+                    } catch (Exception var13) {
+                        var13.printStackTrace();
+                        return Maps.newHashMap();
+                    }
+
+                    Object value = method.invoke(object);
+                    if (!isExcludeNullValue || value != null) {
+                        map.put(field.getName(), String.valueOf(value));
+                    }
+                }
+            } catch (Exception var14) {
+                var14.printStackTrace();
+                return Maps.newHashMap();
+            }
+        }
+
+        return map;
     }
     public static void main(String[] args) {
         System.out.println("\" nihao \"");

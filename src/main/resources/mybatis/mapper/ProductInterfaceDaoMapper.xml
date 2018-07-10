@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecust.dao.ProductInterfaceDao">
+    <!-- 根据productid查表 -->
+    <select id="queryAllInterface" resultType="java.util.Map">
+        SELECT
+            *
+        FROM
+            product_interface
+
+    </select>
+    <!-- 新增数据 -->
+    <insert id="addInterface" parameterType="com.ecust.pojo.ProductInterface">
+        INSERT INTO
+            product_interface(
+                productid,
+                interfacename,
+                interfacepath,
+                interfaceparam,
+                interfaceresponse,
+                status,
+                requeststype,
+                createtime,
+                paramexam,
+                updatetime
+            )
+        VALUES(
+            #{productid},
+            #{interfacename},
+            #{interfacepath},
+            #{interfaceparam},
+            #{interfaceresponse},
+            1,
+            #{requeststype},
+            NOW(),
+            #{paramexam},
+            NOW()
+        )
+    </insert>
+    <!-- 根据productid和interfacename查找数据库 -->
+    <select id="querInterfaceByProductIdAndInterfaceName" resultType="java.util.Map">
+        SELECT
+            *
+        FROM product_interface ee
+        WHERE
+            ee.productid = #{productid} AND ee.interfacename = #{interfacename}
+    </select>
+
+
+    <!-- 根据产品id查询接口 -->
+    <select id="queryInterfaceByProductId" resultType="java.util.Map">
+        SELECT
+            *
+        FROM
+            product_interface ee
+        WHERE ee.productid = #{productId} AND ee.status = 1
+    </select>
+    <!-- 根据接口id查找接口 -->
+    <select id="queryInterfaceById" resultType="java.util.Map">
+        SELECT
+            *
+        FROM
+            product_interface ee
+        WHERE
+            ee.id=#{id} AND ee.status=1
+    </select>
+    <!-- 更新接口信息 -->
+    <update id="updateInterface" parameterType="com.ecust.pojo.ProductInterface">
+        UPDATE
+            product_interface
+        SET
+            <if test="interfacename !=null">
+                interfacename = #{interfacename},
+            </if>
+            <if test="interfacepath != null">
+                interfacepath = #{interfacepath},
+            </if>
+            <if test="interfaceparam != null">
+                interfaceparam = #{interfaceparam},
+            </if>
+            <if test="interfaceresponse != null">
+                interfaceresponse = #{interfaceresponse},
+            </if>
+            <if test="requeststype != null">
+                requeststype = #{requeststype},
+            </if>
+            <if test="paramexam != null">
+                paramexam = #{paramexam},
+            </if>
+            updatetime = NOW()
+        WHERE
+            id = #{id}
+    </update>
+
+
+</mapper>

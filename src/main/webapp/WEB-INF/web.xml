@@ -52,12 +52,7 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
     <!--配置项目启动初始化-->
-    <!-- 初始化项目需要的启动文件，一开始如果不需要初始化可以隐藏 -->
-    <servlet>
-        <servlet-name>interface_url-init_servlet</servlet-name>
-        <servlet-class>com.wechat.start.InterfaceUrlIntiServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
+
 
     <servlet-mapping>
         <servlet-name>equipmentMS</servlet-name>

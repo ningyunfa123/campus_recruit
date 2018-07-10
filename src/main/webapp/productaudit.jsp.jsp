@@ -22,7 +22,7 @@
 <%HttpSession httpSession = request.getSession();%>
 <%String productId= (String) httpSession.getAttribute("productId");%>
 <div class="row search">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form action="" method="post">
             <div class="input-group" style="width: 200px">
                 <label for="applyProduct" class="col-md-4 control-label">选择模块</label>
@@ -47,7 +47,7 @@
         </div>
     </div>
     <div class="input-group" style="width: 200px">
-        <label for="applyType" class="col-md-4 control-label">权限类型</label>
+        <label for="applyType" class="col-md-6 control-label">权限类型</label>
         <div class="col-md-3" id="applyType">
             <input type="radio"  name="applyType" value="使用权" title="使用权" checked="">
             <input type="radio" name="applyType" value="编辑权" title="编辑权">

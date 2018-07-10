@@ -118,4 +118,11 @@
 		WHERE
 			id = #{id}
 	</delete>
+	<select id="queryUserByName" resultType="java.util.Map">
+		SELECT
+			*
+		FROM equ_user ee
+		WHERE ee.userName = #{userName}
+		LIMIT 1
+	</select>
 </mapper>

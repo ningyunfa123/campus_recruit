@@ -5,7 +5,7 @@
 # http://www.sequelpro.com/
 # https://github.com/sequelpro/sequelpro
 #
-# Host: 127.0.0.1 (MySQL 5.7.18)
+# Host: 127.0.0.1 (MySQL 5.7.22)
 # Database: db_equipment
 # Generation Time: 2018-05-23 10:29:46 +0000
 # ************************************************************

@@ -1,6 +1,50 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecust.dao.ProductLineDao">
 
-</beans>
+	<!--   获取所有产品线  -->
+    <select id="queryAllProduct" resultType="java.util.Map">
+	    SELECT
+	        *
+	    FROM
+            product_line ww
+	</select>
+	<!-- 新增产品线 -->
+	<insert id="addProduct" parameterType="com.ecust.pojo.ProductLine">
+        INSERT INTO
+            product_line(
+                productname,
+			    userid,
+			    username,
+			    status,
+			    createtime,
+			    parentmodule
+			)
+		VALUES (
+			#{productname},
+			#{userid},
+			#{username},
+			1,
+			NOW(),
+			''
+		)
+	</insert>
+	<select id="queryProductByNameAndUserId" resultType="java.util.Map">
+		SELECT
+			*
+		FROM product_line ee
+		WHERE ee.productname = #{productName} AND ee.userid = #{userId}
+		LIMIT 1
+	</select>
+	<select id="queryProductByName" resultType="java.util.Map">
+		SELECT
+			*
+		FROM product_line ee
+		WHERE ee.productname = #{productName}
+		LIMIT 1
+	</select>
+
+
+</mapper>

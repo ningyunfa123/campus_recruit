@@ -1,4 +1,11 @@
 package com.ecust.utils.ModuleDeploy;
 
-public class JsonUtil {
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
+import java.util.Collection;
+import java.util.List;
+
+public class JsonUtil<T> {
+
 }

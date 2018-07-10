@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecust.dao.ProductAuditDao">
+    <!-- 新增审核记录 -->
+    <insert id="createAuditRecord" parameterType="com.ecust.pojo.ProductAudit">
+        INSERT INTO
+            product_audit(
+                userid,
+                productid,
+                username,
+                auditstatus,
+                productname,
+                createtime,
+                updatetime,
+                reason,
+                applytime,
+                type
+            )
+        VALUES (
+            #{userid},
+            #{productid},
+            #{username},
+            0,
+            #{productname},
+            NOW(),
+            NOW(),
+            #{reason},
+            #{applytime},
+            #{type}
+        )
+    </insert>
+    <!-- 根据用户和产品查询审核记录 -->
+    <select id="queryAuditRecordByProductIdAndUserId" resultType="java.util.Map">
+        SELECT
+            *
+        FROM
+            product_audit ee
+        WHERE
+            ee.productid = #{productid} AND ee.userid = #{userid}
+    </select>
+    <!-- 更新审核状态 -->
+    <update id="updateAuditStatus" parameterType="com.ecust.pojo.ProductAudit">
+        UPDATE
+            product_audit
+        SET
+            <if test="reason != null">
+                reason = #{reason},
+            </if>
+            <if test="applytime != null">
+                applytime = #{applytime},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            auditstatus = #{auditstatus},
+            updatetime = NOW()
+        WHERE
+            productid = #{productid} AND userid = #{userid}
+    </update>
+    <!-- 查询用户所有审核记录 -->
+    <select id="queryRecordByUserId" resultType="java.util.Map">
+        SELECT
+            *
+        FROM
+            product_audit ee
+        WHERE ee.userid = #{userid}
+    </select>
+    <!-- 查询用户某一审核状态的模块 -->
+    <select id="queryProductByUserIdAndAuditStatus" resultType="java.util.Map">
+        SELECT
+            *
+        FROM
+            product_audit ee
+        WHERE
+            ee.userid = #{userid} AND ee.auditstatus = #{auditstatus}
+    </select>
+
+
+
+
+</mapper>

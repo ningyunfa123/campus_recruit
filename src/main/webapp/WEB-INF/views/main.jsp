@@ -102,7 +102,7 @@ html,body {
 		<div class="row" style="height: 100%;">
 			<div class="col-md-2 col-sm-2 col-xs-2"
 				style="padding: 0;height: 100%;background-color: #f5f3f3">
-				<jsp:include page="main/menu.jsp"></jsp:include>
+				<jsp:include page="main/menu1.jsp"></jsp:include>
 			</div>
 			<div class="col-md-10 col-sm-10 col-xs-10" id="main">
 				<jsp:include page="repair/copyClipBoard.jsp"></jsp:include>
